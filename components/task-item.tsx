@@ -4,11 +4,13 @@ import type React from "react"
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Check, X, GripVertical, Edit2, Sparkles } from "lucide-react"
+import { Check, X, GripVertical, Edit2, Sparkles, Calendar } from "lucide-react"
+import { format, isToday, isTomorrow, isYesterday, isPast } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { TaskExplanationModal } from "@/components/task-explanation-modal"
+import { ConfirmDialog } from "@/components/confirm-dialog"
 import { useTodoStore } from "@/lib/store"
 import { useToast } from "@/hooks/use-toast"
 import type { Task } from "@/lib/types"
@@ -21,8 +23,35 @@ export function TaskItem({ task }: TaskItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [editText, setEditText] = useState(task.title)
   const [showExplanationModal, setShowExplanationModal] = useState(false)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const { toggleTask, updateTask, deleteTask } = useTodoStore()
   const { toast } = useToast()
+
+  const formatDueDate = (dueDate: string) => {
+    const date = new Date(dueDate)
+    
+    if (isToday(date)) return "Today"
+    if (isTomorrow(date)) return "Tomorrow"
+    if (isYesterday(date)) return "Yesterday"
+    
+    return format(date, "MMM d")
+  }
+
+  const getDueDateColor = (dueDate: string) => {
+    const date = new Date(dueDate)
+    
+    if (isPast(date) && !isToday(date)) {
+      return "text-red-500 dark:text-red-400"
+    }
+    if (isToday(date)) {
+      return "text-orange-500 dark:text-orange-400"
+    }
+    if (isTomorrow(date)) {
+      return "text-yellow-500 dark:text-yellow-400"
+    }
+    
+    return "text-gray-500 dark:text-gray-400"
+  }
 
   const handleToggle = () => {
     toggleTask(task.id)
@@ -48,7 +77,12 @@ export function TaskItem({ task }: TaskItemProps) {
   }
 
   const handleDelete = () => {
+    setShowDeleteDialog(true)
+  }
+
+  const confirmDelete = () => {
     deleteTask(task.id)
+    setShowDeleteDialog(false)
     toast({
       title: "Task deleted",
       description: "Task has been removed from your list.",
@@ -71,7 +105,7 @@ export function TaskItem({ task }: TaskItemProps) {
   return (
     <motion.div
       className={`
-        group flex items-center gap-3 p-4 rounded-lg border transition-all duration-300
+        group flex items-start gap-3 p-3 sm:p-4 rounded-lg border transition-all duration-300
         ${
           task.completed
             ? "bg-gradient-to-r from-gray-50/80 via-slate-50/80 to-gray-50/80 dark:from-gray-700/50 dark:via-slate-700/50 dark:to-gray-700/50 border-gray-200/60 dark:border-gray-600/60"
@@ -83,16 +117,18 @@ export function TaskItem({ task }: TaskItemProps) {
       transition={{ type: "spring", stiffness: 400, damping: 25 }}
     >
       {/* Drag Handle */}
-      <div className="cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="cursor-grab active:cursor-grabbing opacity-60 md:opacity-0 md:group-hover:opacity-100 transition-opacity mt-1">
         <GripVertical className="w-4 h-4 text-gray-400" />
       </div>
 
       {/* Checkbox */}
-      <Checkbox
-        checked={task.completed}
-        onCheckedChange={handleToggle}
-        className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-500 data-[state=checked]:border-emerald-500 hover:border-emerald-400 transition-all duration-200"
-      />
+      <div className="mt-1">
+        <Checkbox
+          checked={task.completed}
+          onCheckedChange={handleToggle}
+          className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-emerald-500 data-[state=checked]:to-teal-500 data-[state=checked]:border-emerald-500 hover:border-emerald-400 transition-all duration-200"
+        />
+      </div>
 
       {/* Task Content */}
       <div className="flex-1 min-w-0">
@@ -108,7 +144,7 @@ export function TaskItem({ task }: TaskItemProps) {
         ) : (
           <motion.span
             className={`
-              block text-sm transition-all duration-200
+              block text-sm transition-all duration-200 break-words
               ${task.completed ? "text-gray-500 dark:text-gray-400 line-through" : "text-gray-900 dark:text-white"}
             `}
             layout
@@ -117,11 +153,19 @@ export function TaskItem({ task }: TaskItemProps) {
           </motion.span>
         )}
 
-        <div className="text-xs text-gray-400 mt-1">{new Date(task.createdAt).toLocaleDateString()}</div>
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2 text-xs text-gray-400 mt-1">
+          <span className="truncate">Created {new Date(task.createdAt).toLocaleDateString()}</span>
+          {task.dueDate && (
+            <div className={`flex items-center gap-1 ${getDueDateColor(task.dueDate)} whitespace-nowrap`}>
+              <Calendar className="w-3 h-3 flex-shrink-0" />
+              <span>Due {formatDueDate(task.dueDate)}</span>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="flex flex-col sm:flex-row items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity flex-shrink-0">
         <Button
           variant="ghost"
           size="sm"
@@ -156,6 +200,15 @@ export function TaskItem({ task }: TaskItemProps) {
         isOpen={showExplanationModal}
         onClose={() => setShowExplanationModal(false)}
         taskTitle={task.title}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        onClose={() => setShowDeleteDialog(false)}
+        onConfirm={confirmDelete}
+        title="Delete task?"
+        description={`Are you sure you want to delete "${task.title}"? This action cannot be undone.`}
       />
     </motion.div>
   )

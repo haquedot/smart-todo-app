@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { AlertTriangle } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { Portal } from "@/components/portal"
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -14,43 +15,46 @@ interface ConfirmDialogProps {
 
 export function ConfirmDialog({ isOpen, onClose, onConfirm, title, description }: ConfirmDialogProps) {
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-          onClick={onClose}
-        >
+    <Portal>
+      <AnimatePresence>
+        {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-[9999]"
+            onClick={onClose}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0 }}
           >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-600" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm shadow-2xl border border-gray-200 dark:border-gray-700"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-start gap-3 mb-4">
+                <div className="w-10 h-10 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-semibold text-gray-900 dark:text-white mb-1">{title}</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 break-words">{description}</p>
+                </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">{title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{description}</p>
-              </div>
-            </div>
 
-            <div className="flex gap-3 justify-end">
-              <Button variant="outline" onClick={onClose}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={onConfirm}>
-                Confirm
-              </Button>
-            </div>
+              <div className="flex gap-3 justify-end">
+                <Button variant="outline" onClick={onClose} size="sm">
+                  Cancel
+                </Button>
+                <Button variant="destructive" onClick={onConfirm} size="sm">
+                  Confirm
+                </Button>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>
+    </Portal>
   )
 }

@@ -13,12 +13,13 @@ export const useTodoStore = create<TodoStore>()(
       darkMode: false,
 
       // Actions
-      addTask: (title: string) => {
+      addTask: (title: string, dueDate?: string) => {
         const newTask: Task = {
           id: uuidv4(),
           title,
           completed: false,
           createdAt: new Date().toISOString(),
+          dueDate,
           order: get().tasks.length,
         }
         set((state) => ({

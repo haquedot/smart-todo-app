@@ -42,18 +42,58 @@ export function getFilteredTasks(tasks: Task[], statusFilter: StatusFilterType, 
   return filteredTasks.filter((task) => {
     const taskDate = new Date(task.createdAt)
     const taskDay = new Date(taskDate.getFullYear(), taskDate.getMonth(), taskDate.getDate())
+    
+    // Also check due date if it exists
+    let dueDateMatches = false
+    if (task.dueDate) {
+      const dueDate = new Date(task.dueDate)
+      const dueDay = new Date(dueDate.getFullYear(), dueDate.getMonth(), dueDate.getDate())
+      
+      switch (dateFilter) {
+        case "today":
+          dueDateMatches = dueDay.getTime() === today.getTime()
+          break
+        case "tomorrow":
+          dueDateMatches = dueDay.getTime() === tomorrow.getTime()
+          break
+        case "yesterday":
+          dueDateMatches = dueDay.getTime() === yesterday.getTime()
+          break
+        case "week":
+          dueDateMatches = dueDay >= weekStart && dueDay <= weekEnd
+          break
+        case "month":
+          dueDateMatches = dueDay >= monthStart && dueDay <= monthEnd
+          break
+        case "due-today":
+          dueDateMatches = dueDay.getTime() === today.getTime()
+          break
+        case "due-week":
+          dueDateMatches = dueDay >= weekStart && dueDay <= weekEnd
+          break
+        case "overdue":
+          dueDateMatches = dueDay < today
+          break
+      }
+    }
 
     switch (dateFilter) {
       case "today":
-        return taskDay.getTime() === today.getTime()
+        return taskDay.getTime() === today.getTime() || dueDateMatches
       case "tomorrow":
-        return taskDay.getTime() === tomorrow.getTime()
+        return taskDay.getTime() === tomorrow.getTime() || dueDateMatches
       case "yesterday":
-        return taskDay.getTime() === yesterday.getTime()
+        return taskDay.getTime() === yesterday.getTime() || dueDateMatches
       case "week":
-        return taskDay >= weekStart && taskDay <= weekEnd
+        return (taskDay >= weekStart && taskDay <= weekEnd) || dueDateMatches
       case "month":
-        return taskDay >= monthStart && taskDay <= monthEnd
+        return (taskDay >= monthStart && taskDay <= monthEnd) || dueDateMatches
+      case "due-today":
+        return dueDateMatches
+      case "due-week":
+        return dueDateMatches
+      case "overdue":
+        return dueDateMatches
       default:
         return true
     }

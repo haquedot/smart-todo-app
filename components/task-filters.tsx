@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
-import { Calendar, Clock, CheckCircle, List, Sun, Clock3, Clock4, CalendarDays, CalendarRange } from "lucide-react"
+import { Calendar, Clock, CheckCircle, List, Sun, Clock3, Clock4, CalendarDays, CalendarRange, AlertTriangle, Target } from "lucide-react"
 import type { StatusFilterType, DateFilterType } from "@/lib/types"
 
 interface TaskFiltersProps {
@@ -35,7 +35,7 @@ export function TaskFilters({
 
   return (
     <motion.div
-      className="mb-6 space-y-3"
+      className="mb-3 space-y-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
