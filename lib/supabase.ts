@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js'
+import { getEnvVars } from './env'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+// Get validated environment variables
+const { supabaseUrl, supabaseAnonKey } = getEnvVars()
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
