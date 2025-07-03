@@ -170,8 +170,12 @@ export function TaskItem({ task }: TaskItemProps) {
           variant="ghost"
           size="sm"
           onClick={handleExplain}
-          className="h-8 w-8 p-0 text-purple-500 hover:text-purple-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:text-purple-400 dark:hover:text-purple-300 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20"
-          title="Explain with AI"
+          className={`h-8 w-8 p-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 dark:hover:from-purple-900/20 dark:hover:to-pink-900/20 ${
+            task.explanation 
+              ? 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20' 
+              : 'text-purple-500 hover:text-purple-700 dark:text-purple-400 dark:hover:text-purple-300'
+          }`}
+          title={task.explanation ? "View AI explanation" : "Explain with AI"}
         >
           <Sparkles className="w-3 h-3" />
         </Button>
@@ -199,6 +203,7 @@ export function TaskItem({ task }: TaskItemProps) {
       <TaskExplanationModal
         isOpen={showExplanationModal}
         onClose={() => setShowExplanationModal(false)}
+        taskId={task.id}
         taskTitle={task.title}
       />
 

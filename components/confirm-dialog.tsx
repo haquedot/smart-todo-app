@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { AlertTriangle } from "lucide-react"
+import { AlertTriangle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Portal } from "@/components/portal"
 
@@ -11,9 +11,19 @@ interface ConfirmDialogProps {
   onConfirm: () => void
   title: string
   description: string
+  confirmText?: string
+  isLoading?: boolean
 }
 
-export function ConfirmDialog({ isOpen, onClose, onConfirm, title, description }: ConfirmDialogProps) {
+export function ConfirmDialog({ 
+  isOpen, 
+  onClose, 
+  onConfirm, 
+  title, 
+  description, 
+  confirmText = "Confirm",
+  isLoading = false 
+}: ConfirmDialogProps) {
   return (
     <Portal>
       <AnimatePresence>
@@ -44,11 +54,23 @@ export function ConfirmDialog({ isOpen, onClose, onConfirm, title, description }
               </div>
 
               <div className="flex gap-3 justify-end">
-                <Button variant="outline" onClick={onClose} size="sm">
+                <Button 
+                  variant="outline" 
+                  onClick={onClose} 
+                  size="sm"
+                  disabled={isLoading}
+                >
                   Cancel
                 </Button>
-                <Button variant="destructive" onClick={onConfirm} size="sm">
-                  Confirm
+                <Button 
+                  variant="destructive" 
+                  onClick={onConfirm} 
+                  size="sm"
+                  disabled={isLoading}
+                  className="gap-2"
+                >
+                  {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {confirmText}
                 </Button>
               </div>
             </motion.div>

@@ -5,6 +5,8 @@ import "./globals.css"
 import { Toaster } from "@/components/ui/toaster"
 import { PWAInstaller } from "@/components/pwa-installer"
 import { ClientOnly } from "@/components/client-only"
+import { AuthProvider } from "@/lib/auth"
+import { AuthErrorBoundary } from "@/components/auth-error-boundary"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -35,11 +37,15 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
       </head>
       <body className={inter.className} suppressHydrationWarning>
-        {children}
-        <ClientOnly>
-          <Toaster />
-          <PWAInstaller />
-        </ClientOnly>
+        <AuthErrorBoundary>
+          <AuthProvider>
+            {children}
+            <ClientOnly>
+              <Toaster />
+              <PWAInstaller />
+            </ClientOnly>
+          </AuthProvider>
+        </AuthErrorBoundary>
       </body>
     </html>
   )

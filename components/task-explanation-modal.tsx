@@ -6,14 +6,16 @@ import { Sparkles, X, Loader2, Save, Check, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
+import { useTodoStore } from "@/lib/store"
 
 interface TaskExplanationModalProps {
   isOpen: boolean
   onClose: () => void
+  taskId: string
   taskTitle: string
 }
 
-export function TaskExplanationModal({ isOpen, onClose, taskTitle }: TaskExplanationModalProps) {
+export function TaskExplanationModal({ isOpen, onClose, taskId, taskTitle }: TaskExplanationModalProps) {
   const [explanation, setExplanation] = useState("")
   const [savedExplanation, setSavedExplanation] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -21,26 +23,21 @@ export function TaskExplanationModal({ isOpen, onClose, taskTitle }: TaskExplana
   const [isSaved, setIsSaved] = useState(false)
   const [justSaved, setJustSaved] = useState(false)
   const { toast } = useToast()
+  const { tasks, updateTaskExplanation } = useTodoStore()
 
-  // Generate storage key for this task
-  const storageKey = `task-explanation-${taskTitle.toLowerCase().replace(/\s+/g, '-')}`
+  // Get current task and its explanation
+  const currentTask = tasks.find(t => t.id === taskId)
 
   // Load saved explanation on mount
   useEffect(() => {
-    if (isOpen && taskTitle) {
-      const saved = localStorage.getItem(storageKey)
-      if (saved) {
-        setSavedExplanation(saved)
-        setExplanation(saved)
-        setIsSaved(true)
-        setError("") // Clear any previous errors
-      } else {
-        setSavedExplanation("")
-        setExplanation("")
-        setIsSaved(false)
-      }
+    if (isOpen && taskId && currentTask) {
+      const existingExplanation = currentTask.explanation || ""
+      setSavedExplanation(existingExplanation)
+      setExplanation(existingExplanation)
+      setIsSaved(!!existingExplanation)
+      setError("") // Clear any previous errors
     }
-  }, [isOpen, taskTitle, storageKey])
+  }, [isOpen, taskId, currentTask])
 
   const fetchExplanation = async () => {
     if (!taskTitle) return
@@ -73,7 +70,8 @@ export function TaskExplanationModal({ isOpen, onClose, taskTitle }: TaskExplana
 
   const handleSave = () => {
     if (explanation.trim()) {
-      localStorage.setItem(storageKey, explanation)
+      // Update the task explanation in the store (and sync to database)
+      updateTaskExplanation(taskId, explanation)
       setSavedExplanation(explanation)
       setIsSaved(true)
       setJustSaved(true)
@@ -89,7 +87,8 @@ export function TaskExplanationModal({ isOpen, onClose, taskTitle }: TaskExplana
   }
 
   const handleDelete = () => {
-    localStorage.removeItem(storageKey)
+    // Remove explanation from the task
+    updateTaskExplanation(taskId, "")
     setSavedExplanation("")
     setExplanation("")
     setIsSaved(false)
