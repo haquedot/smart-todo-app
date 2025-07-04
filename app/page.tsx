@@ -17,6 +17,7 @@ import { ConfirmDialog } from "@/components/confirm-dialog"
 import { UserProfile } from "@/components/user-profile"
 import { SyncIndicator } from "@/components/sync-indicator"
 import { DatabaseSetupChecker } from "@/components/database-setup-checker"
+import { EnvironmentDebugger } from "@/components/environment-debugger"
 import { useAuth } from "@/lib/auth"
 import { useTodoStore } from "@/lib/store"
 import { exportTasks, importTasks } from "@/lib/file-utils"
@@ -272,6 +273,7 @@ export default function TodoApp() {
                   onClick={handleSignIn}
                   variant="outline"
                   size="sm"
+                  data-testid="sign-in-button"
                   className="gap-2 bg-white/80 dark:bg-gray-800/80 border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-200 transition-all duration-200 px-3 py-2"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -549,6 +551,9 @@ export default function TodoApp() {
         confirmText={isClearingTasks ? "Clearing..." : "Clear All"}
         isLoading={isClearingTasks}
       />
+
+      {/* Environment Debugger - Remove after fixing OAuth */}
+      <EnvironmentDebugger />
     </div>
   )
 }
