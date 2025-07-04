@@ -6,7 +6,8 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "verify-config": "node verify-config.js"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.21",

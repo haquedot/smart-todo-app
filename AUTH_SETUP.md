@@ -38,8 +38,10 @@ This guide will help you set up Supabase authentication with Google OAuth for yo
    - Select "Web application"
    - Add authorized redirect URIs:
      - `https://rvynhgxdjikninyszkmq.supabase.co/auth/v1/callback` (production)
-     - `http://localhost:3000/auth/callback` (for development)
+     - `http://localhost:3000/auth/callback` (for development - only if testing locally)
    - Copy the Client ID and Client Secret
+
+**Important**: In production, remove the localhost redirect URI for security.
 
 ## Step 4: Configure Supabase Auth
 
@@ -55,6 +57,31 @@ This guide will help you set up Supabase authentication with Google OAuth for yo
 2. Open your app in the browser
 3. Click "Sign In" to test Google authentication
 4. After successful login, your tasks should automatically sync with Supabase
+
+## Step 6: Production Deployment
+
+When deploying to production (Vercel, Netlify, etc.):
+
+1. **Set up environment variables** in your deployment platform:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://rvynhgxdjikninyszkmq.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   NEXT_PUBLIC_SITE_URL=https://your-production-domain.com
+   GEMINI_API_KEY=your_gemini_api_key
+   ```
+
+2. **Update Google OAuth settings**:
+   - Go to Google Cloud Console → APIs & Services → Credentials
+   - Edit your OAuth client ID
+   - Update authorized redirect URIs to include your production domain:
+     - `https://rvynhgxdjikninyszkmq.supabase.co/auth/v1/callback`
+   - Remove localhost URLs for security
+
+3. **Verify Supabase settings**:
+   - In Supabase Authentication → Providers → Google
+   - Ensure the redirect URL matches: `https://rvynhgxdjikninyszkmq.supabase.co/auth/v1/callback`
+
+**Important**: The `NEXT_PUBLIC_SITE_URL` environment variable ensures that OAuth redirects work correctly in production.
 
 ## Features
 

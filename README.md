@@ -48,3 +48,20 @@
 4. If the API key isn't set, you'll get fallback suggestions instead of errors
 
 The app should now run without hydration errors and the AI features should work properly!
+
+## Authentication Setup (Optional)
+
+For cloud sync and multi-device access:
+- Follow the detailed guide in `AUTH_SETUP.md`
+- For production deployment, see `PRODUCTION_DEPLOY.md`
+- The app works fully offline without authentication
+
+## Production Deployment
+
+⚠️ **Important**: Before deploying to production, read `PRODUCTION_DEPLOY.md` for critical OAuth setup requirements.
+
+**Quick Configuration Check:**
+```bash
+npm run verify-config
+```
+This script will verify your environment variables and configuration are ready for deployment.
