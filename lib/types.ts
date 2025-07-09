@@ -36,6 +36,7 @@ export interface TodoActions {
   syncWithSupabase: (userId: string) => Promise<void>
   setAuthenticated: (isAuthenticated: boolean) => void
   setSyncStatus: (status: 'idle' | 'syncing' | 'success' | 'error') => void
+  clearLocalData: () => void
 }
 
 export type TodoStore = TodoState & TodoActions

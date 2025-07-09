@@ -216,6 +216,24 @@ export const useTodoStore = create<TodoStore>()(
         set({ isAuthenticated })
       },
 
+      clearLocalData: () => {
+        // Clear all tasks and reset filters when user logs out
+        set({ 
+          tasks: [],
+          statusFilter: "all",
+          dateFilter: "all",
+          isAuthenticated: false,
+          syncStatus: 'idle'
+        })
+        
+        // Also explicitly clear localStorage to ensure complete cleanup
+        try {
+          localStorage.removeItem("smart-todo-storage")
+        } catch (error) {
+          console.error('Failed to clear localStorage:', error)
+        }
+      },
+
       setSyncStatus: (status: 'idle' | 'syncing' | 'success' | 'error') => {
         set({ syncStatus: status })
       },

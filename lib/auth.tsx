@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
+import { getAuthCallbackUrl } from '@/lib/config'
 
 type AuthContextType = {
   user: User | null
@@ -44,32 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     // Get the correct redirect URL based on environment
-    const getRedirectUrl = () => {
-      // Check for environment variable override (required for production)
-      const envRedirectUrl = process.env.NEXT_PUBLIC_SITE_URL
-      if (envRedirectUrl) {
-        return `${envRedirectUrl}/auth/callback`
-      }
-      
-      // Fallback to current origin (works for development)
-      if (typeof window !== 'undefined') {
-        const currentOrigin = window.location.origin
-        // Warn if we're likely in production but no NEXT_PUBLIC_SITE_URL is set
-        if (!currentOrigin.includes('localhost') && !currentOrigin.includes('127.0.0.1')) {
-          console.warn(
-            '⚠️ NEXT_PUBLIC_SITE_URL not set for production deployment. ' +
-            'OAuth redirects may fail. See PRODUCTION_DEPLOY.md for setup instructions.'
-          )
-        }
-        return `${currentOrigin}/auth/callback`
-      }
-      
-      // Last fallback
-      return '/auth/callback'
-    }
+    const redirectUrl = getAuthCallbackUrl()
 
-    const redirectUrl = getRedirectUrl()
-    
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {

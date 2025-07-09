@@ -17,7 +17,6 @@ import { ConfirmDialog } from "@/components/confirm-dialog"
 import { UserProfile } from "@/components/user-profile"
 import { SyncIndicator } from "@/components/sync-indicator"
 import { DatabaseSetupChecker } from "@/components/database-setup-checker"
-import { EnvironmentDebugger } from "@/components/environment-debugger"
 import { useAuth } from "@/lib/auth"
 import { useTodoStore } from "@/lib/store"
 import { exportTasks, importTasks } from "@/lib/file-utils"
@@ -48,6 +47,7 @@ export default function TodoApp() {
     importTasksFromData,
     syncWithSupabase,
     setAuthenticated,
+    clearLocalData,
     syncStatus
   } = useTodoStore()
 
@@ -173,10 +173,11 @@ export default function TodoApp() {
     try {
       setIsLoggingOut(true)
       await signOut()
-      setAuthenticated(false)
+      // Clear all local data when user logs out
+      clearLocalData()
       toast({
         title: "Signed out",
-        description: "You have been successfully signed out.",
+        description: "You have been successfully signed out and local data cleared.",
       })
     } catch (error) {
       toast({
@@ -551,9 +552,6 @@ export default function TodoApp() {
         confirmText={isClearingTasks ? "Clearing..." : "Clear All"}
         isLoading={isClearingTasks}
       />
-
-      {/* Environment Debugger - Remove after fixing OAuth */}
-      <EnvironmentDebugger />
     </div>
   )
 }
