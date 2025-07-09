@@ -231,11 +231,11 @@ export default function TodoApp() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/30 transition-all duration-700 ease-in-out">
+    <div className="min-h-screen bg-gradient-to-br from-slate-0 via-blue-150 to-indigo-200 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/30 transition-all duration-700 ease-in-out">
       <div className="container mx-auto p-4 md:py-8 max-w-4xl">
         {/* Header */}
         <motion.div
-          className="mb-3 p-4 sm:p-6 bg-gradient-to-r from-white/60 via-blue-50/40 to-purple-50/40 dark:from-gray-800/60 dark:via-blue-900/30 dark:to-purple-900/30 rounded-2xl border border-white/50 dark:border-gray-700/50 backdrop-blur-sm shadow-lg"
+          className="mb-3 p-4 sm:p-6 bg-gradient-to-r from-white/100 via-blue-100/40 to-purple-200/40 dark:from-gray-800/60 dark:via-blue-900/30 dark:to-purple-900/30 rounded-2xl border border-gray/50 dark:border-gray-700/50 shadow-sm"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
@@ -248,7 +248,7 @@ export default function TodoApp() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-md flex-shrink-0">
+              <div className="p-2.5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-xs flex-shrink-0">
                 <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </div>
               <div className="min-w-0">
@@ -356,7 +356,7 @@ export default function TodoApp() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 dark:border-gray-700/50 p-4 md:p-8 mb-3 transition-all duration-700 ease-in-out"
+          className="bg-white/80 dark:bg-gray-800/80 rounded-2xl shadow-sm border border-gray/20 dark:border-gray-700/50 p-4 md:p-8 mb-3 transition-all duration-700 ease-in-out"
         >
 
           {/* Database Setup Checker */}
@@ -380,7 +380,7 @@ export default function TodoApp() {
               />
               <Button
                 onClick={handleAddTask}
-                className="gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg shadow-emerald-500/25 md:w-auto"
+                className="gap-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-sm shadow-emerald-500/25 md:w-auto"
               >
                 <Plus className="w-4 h-4" />
                 Add Task

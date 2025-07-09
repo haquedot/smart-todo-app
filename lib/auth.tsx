@@ -44,26 +44,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const signInWithGoogle = async () => {
-    // Get the correct redirect URL based on environment
-    const redirectUrl = getAuthCallbackUrl()
+    try {
+      console.log('🚀 Starting Google OAuth...')
+      
+      const redirectUrl = getAuthCallbackUrl()
+      console.log('� Redirect URL:', redirectUrl)
 
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: redirectUrl
+        }
+      })
+
+      if (error) {
+        console.error('❌ OAuth Error:', error)
+        throw error
       }
-    })
-    if (error) {
-      console.error('Error signing in with Google:', error)
-      // Provide helpful error message for common redirect URI issues
-      if (error.message?.includes('redirect') || error.message?.includes('URI')) {
-        console.error(
-          'This might be a redirect URI configuration issue. ' +
-          'Check that NEXT_PUBLIC_SITE_URL is set correctly and ' +
-          'your Google OAuth settings match. See PRODUCTION_DEPLOY.md'
-        )
+
+      if (data?.url) {
+        console.log('✅ OAuth URL generated:', data.url)
+        console.log('🔄 Redirecting to Google...')
+        // Redirect to the OAuth URL
+        window.location.href = data.url
       }
-      throw error
+
+    } catch (err) {
+      console.error('💥 Unexpected error:', err)
+      throw err
     }
   }
 
